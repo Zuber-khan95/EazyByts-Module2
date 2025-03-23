@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const stocksSchema=mongoose.Schema({
+const stockSchema=mongoose.Schema({
     "symbol":{
         type:String,
         required:true
@@ -36,5 +36,5 @@ const stocksSchema=mongoose.Schema({
     }
 });
 
-const Stock=mongoose.model('Stock',stocksSchema);
+const Stock=mongoose.model('Stock',stockSchema);
 export default Stock;

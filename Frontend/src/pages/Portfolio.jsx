@@ -3,6 +3,8 @@ import LineGraph from '../components/lineGraph.jsx'
 import {useAuth} from '../context/AuthContext.jsx'
 import Card from '../components/Card.jsx'
 import Button from 'react-bootstrap/Button'
+import {  MdDelete } from 'react-icons/md'
+import './Portfolio.css'
 import axios from 'axios'
 export default function Portfolio(){
     const { user }=useAuth();
@@ -22,12 +24,24 @@ setData(response.data.user.Stocks);
 console.error("Error:",err.response?err.response.data.message:"server error");
         }
     }
+
+    let handleDelete=async(itemId)=>{
+try{
+    console.log(itemId,user.id);
+let response=await axios.delete(`http://localhost:8080/portfolio/${itemId}/${user.id}`);
+console.log(response.data.state);
+}
+catch(err)
+{
+    console.error(err.response?err.response.data.message:"Server Error");
+}
+    }
     
     useEffect(() => {
         if (user?.id) {
-          getUserData(); // Only fetch data if user.id is available
+          getUserData(); 
         }
-      }, [user?.id]);
+      }, [user?.id,data]);
 
    if(data.length===0)
    {
@@ -38,19 +52,25 @@ console.error("Error:",err.response?err.response.data.message:"server error");
     );
    }
     return (
-    <div>
+        <div>
+            <div>
             {user? <h3 style={{color:"lightBlue"}}>Welcome <u>{user.username}</u> On PortFolio Page...</h3>:
             <h3 style={{color:"blue"}}>Welcome Guest  On PortFolio Page...</h3>}
-     
+            </div>
+            <div className="Outer">
      {data.map((stock)=>(
-        <div className="Outer" key={stock._id}>
-        <div className="inner" >
+       <div className="inner" key={stock._id}>
         <Card item={stock}/>
+         <div style={{color:"green",textAlign:"right"}}>
+                     <span onClick={()=>{handleDelete(stock._id);}}style={{color:"red"}}><MdDelete /></span>
+                  </div>
         <Button variant="primary">Buy</Button>
         </div>
+     ))}
         </div>
-))}
-       
+        <div>
+            <LineGraph data={data}/>
         </div>
-    );
+        </div>
+     )
 }

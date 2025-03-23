@@ -5,6 +5,7 @@ import Card from '../components/Card.jsx';
 import { useStock } from '../context/StockContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import Button from 'react-bootstrap/Button'
+import { MdEdit, MdDelete } from 'react-icons/md'
 import './Home.css'
 import { useFlash } from '../context/FlashContext.jsx';
 import { useNavigate } from 'react-router-dom'
@@ -47,6 +48,26 @@ if(response.data.state==="success")
     }
 };
 
+
+let handleDelete=async(id)=>{
+    try{
+let response=await axios.delete(`http://localhost:8080/stock/${id}`);
+if(response.data.state==="success")
+{
+updateFlash({success:"Successfully Deleted the stock"});
+setTimeout(()=>updateFlash({success:""}),4000); 
+    };
+}
+    catch(err){
+        console.error("Error:",err.response?err.response.data.message:"Server Error");
+        updateFlash({ error:"Unable to delete the stock"});      
+        setTimeout(()=>updateFlash({error:""}),4000);
+    }
+};
+
+let handleEdit=(id)=>{
+    navigate(`/edit/${id}`);
+};
     return(
     <div>
           {flash? <div style={{color:"green"}}>{flash.success}</div>:<div style={{color:"red"}}>{flash.error}</div>}
@@ -54,6 +75,10 @@ if(response.data.state==="success")
      {stocks.map((item,index)=>(
     <div className="inner" key={index}>
       <Card  item={item} /> 
+      <div style={{color:"green",textAlign:"right"}}>
+             <span onClick={()=>{handleEdit(item._id);}}><MdEdit/></span> &nbsp;
+             <span onClick={()=>{handleDelete(item._id);}}style={{color:"red"}}><MdDelete /></span>
+          </div>
       <Button variant="primary">Buy</Button> &nbsp;
       {user?<Button variant='primary' onClick={()=>{addStockwithUser(item._id,user.id);}}>Add to Cart</Button>
       :<Button>Logged in to use this</Button>}

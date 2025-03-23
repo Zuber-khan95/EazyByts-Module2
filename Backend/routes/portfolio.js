@@ -42,7 +42,39 @@ res.json({state:"success",message:"Successfully Stock added."});
     {
         next(new ExpressError("Internal Server Error"));
     }
-})
+}); 
+
+router.delete('/:stockId/:userId',async(req,res,next)=>{
+    let {stockId,userId}=req.params;
+    try{
+        const stock=await Stock.findById(stockId);
+        if(!stock)
+        {
+            next( new ExpressError("This stock does not found.", 404));
+        }
+        console.log(stock);
+        const user=await User.findById(userId);
+if(!user)
+{
+    next( new ExpressError("This user does not found.", 404));
+}
+
+const stockObjectId= new mongoose.Types.ObjectId(stockId);
+
+const updatedUser=await User.findByIdAndUpdate( userId ,
+    { $pull : { Stocks : stockObjectId }} , 
+    { new: true });
+console.log(updatedUser);
+// user.Stocks.push(stock);
+// await user.save();
+res.json({state:"success",message:"Successfully Stock deleted."});
+    }
+    catch(err)
+    {
+        next(new ExpressError("Internal Server Error"));
+    }
+});
+
 
 
 export default router;
