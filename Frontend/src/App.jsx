@@ -15,14 +15,15 @@ import NotFound from "./pages/NotFound.jsx"
 import EditStock from './pages/EditStock.jsx'
 
 import { StockProvider } from './context/StockContext.jsx'
-import { AuthProvider } from './context/AuthContext.jsx'
+import { AuthProvider} from './context/AuthContext.jsx'
+import { FlashProvider } from './context/FlashContext.jsx'
 import ProtectedRoute from './context/ProtectedRoute.jsx'
 
 function App() {
-
   return (
     <AuthProvider>
   <StockProvider>
+    <FlashProvider>
 <BrowserRouter>
 <Routes>
   <Route path="/" element={<Layout/>}>
@@ -31,9 +32,7 @@ function App() {
 <Route path="/portfolio" element={
   <ProtectedRoute>
   <Portfolio/>
-  </ProtectedRoute>
-  }/>
- 
+  </ProtectedRoute>}/>
   <Route path='/login' element={<Login/>} />
   <Route path='/signup' element={<Signup/>} />
   <Route path="*" element={<NotFound/>}/>
@@ -41,6 +40,7 @@ function App() {
   </Route>
 </Routes>
 </BrowserRouter>  
+</FlashProvider>
 </StockProvider>
 </AuthProvider>
   )

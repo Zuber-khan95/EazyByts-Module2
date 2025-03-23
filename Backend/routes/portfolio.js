@@ -4,7 +4,7 @@ import Stock from '../Model/stock.js'
 import User from '../Model/user.js'
 const router=express.Router();
 
-router.get("/:userId",async(req,res,err)=>{
+router.get("/:userId",async(req,res,next)=>{
     let {userId}=req.params;
     try{
         const user=await User.findById(userId).populate("Stocks");

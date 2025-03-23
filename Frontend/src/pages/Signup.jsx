@@ -7,6 +7,7 @@ axios.defaults.withCredentials = true;
 import {useNavigate} from 'react-router-dom'
 import "./Signup.css"
 import {useAuth} from '../context/AuthContext.jsx'
+import {useFlash} from "../context/FlashContext.jsx"
 
 
 export default function Signup()
@@ -17,11 +18,7 @@ export default function Signup()
     password:""
   });
 
-    let [flashMessage,setFlashMessage]=useState({
-      success:"",
-      failure:""
-    });
-  
+ const {flash,updateFlash}=useFlash();
     const navigate=useNavigate();
     const { login }=useAuth();
 
@@ -37,8 +34,8 @@ export default function Signup()
       login(response.data.user);
         if(response.data.message==="Registration successful")
         {
-          setFlashMessage({success:"Successfully Signed Up and LoggedIn"});
-          setTimeout(()=>setFlashMessage({success:""}),4000);
+          updateFlash({success:"Successfully Signed Up and LoggedIn"});
+          setTimeout(()=>updateFlash({success:""}),4000);
           setTimeout(()=>navigate('/'),4000);
     
     setFormData({
@@ -52,15 +49,16 @@ export default function Signup()
       catch(err)
       {
         console.error("Error:",err.response?err.response.data.message:"server error");
-        setFlashMessage({error:"Username already exist."});
-        setTimeout(()=>setFlashMessage({error:""}),4000);
+        updateFlash({error:"Username already exist."});
+        setTimeout(()=>updateFlash({error:""}),4000);
       }
     
     };
 
   return (
     <div className="Form">
-       {flashMessage.success? <div style={{color:"green"}}>{flashMessage.success}</div>:<div style={{color:"red"}}>{flashMessage.error}</div>}
+       {flash.success? <div style={{color:"green"}}>{flash.success}</div>
+       :<div style={{color:"red"}}>{flash.error}</div>}
 
   <div className="Signup">
   <h3 style={{textAlign:"centre",color:"blue"}}>Signup Form</h3>

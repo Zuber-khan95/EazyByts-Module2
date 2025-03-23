@@ -5,15 +5,19 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Outlet } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios'
+import { useFlash } from '../context/FlashContext.jsx';
 import {useAuth} from "../context/AuthContext.jsx"
 function Layout() {
   const {logout,user} =useAuth();
+const {updateFlash}=useFlash();
   let handleLogout=async()=>{
     try{
 const response=await axios.post("http://localhost:8080/logout");
 if(response.data.state==="success")
 {
   logout();
+  updateFlash({success:"Successfully Logged Out"});
+  setTimeout(()=>{updateFlash({success:""});},4000);
 }
     }
     catch(err){

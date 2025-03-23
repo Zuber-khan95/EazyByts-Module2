@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 import {useNavigate} from 'react-router-dom'
+import { useFlash } from '../context/FlashContext';
 import './Login.css'
 
 export default function Login()
@@ -13,10 +14,7 @@ export default function Login()
     password:""
   });
 
-    let [flashMessage,setFlashMessage]=useState({
-      success:"",
-      failure:""
-    });
+   const{flash,updateFlash}=useFlash();
   
     const navigate=useNavigate();
 
@@ -30,8 +28,8 @@ export default function Login()
       try{
         const response=await axios.post("http://localhost:8080/login",FormData);
         console.log(response.data);
-          setFlashMessage({success:"Successfully signedIn"});
-          setTimeout(()=>setFlashMessage({success:""}),4000);
+          updateFlash({success:"Successfully signedIn"});
+          setTimeout(()=>updateFlash({success:""}),4000);
           setTimeout(()=>navigate('/'),4000);
     
     setFormData({
@@ -41,13 +39,14 @@ export default function Login()
       catch(err)
       {
         console.error("Error:",err.response?err.response.data.message:"Server Error");
-        setFlashMessage({error:"Username or password is incorrect"});
-        setTimeout(()=>setFlashMessage({error:""}),4000);
+        updateFlash({error:"Username or password is incorrect"});
+        setTimeout(()=>updateFlash({error:""}),4000);
     };
   }
   return (
     <div className="Form">
-       {flashMessage.success? <div style={{color:"green"}}>{flashMessage.success}</div>:<div style={{color:"red"}}>{flashMessage.error}</div>}
+       {flash.success? <div style={{color:"green"}}>{flash.success}</div>
+       :<div style={{color:"red"}}>{flash.error}</div>}
 
        <div className="login">
   <h3 style={{textAlign:"centre",color:"blue"}}>Login Form</h3>

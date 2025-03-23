@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 import {useNavigate} from 'react-router-dom'
+import { useFlash } from '../context/FlashContext';
 import DatePicker from 'react-date-picker'
 import './AddStock.css'
 
@@ -18,11 +19,7 @@ export default function AddStock()
     date:""
   });
 
-    let [flashMessage,setFlashMessage]=useState({
-      success:"",
-      failure:""
-    });
-  
+  const {flash,updateFlash}=useFlash();
     const navigate=useNavigate();
 
   let HandleFormData=(event)=>{
@@ -36,8 +33,8 @@ export default function AddStock()
        const response= await axios.post("http://localhost:8080/stock/new",FormData);
           if(response.data.state==="success") {
       
-          setFlashMessage({success:"Successfully Added the stock"});
-          setTimeout(()=>setFlashMessage({success:""}),4000);
+          updateFlash({success:"Successfully Added the stock"});
+          setTimeout(()=>setFlash({success:""}),4000);
           setTimeout(()=>navigate('/'),4000);
     
     setFormData({
@@ -52,14 +49,15 @@ export default function AddStock()
       catch(err)
       {
         console.error("Error:",err.response?err.response.data.message:"Server Error");
-        setFlashMessage({error:"Unable to add the stock"});
-        setTimeout(()=>setFlashMessage({error:""}),4000);
+        updateFlash({error:"Unable to add the stock"});
+        setTimeout(()=>setFlash({error:""}),4000);
       }
     };
 
   return (
     <div className="Form">
-       {flashMessage.success? <div style={{color:"green"}}>{flashMessage.success}</div>:<div style={{color:"red"}}>{flashMessage.error}</div>}
+       {flash.success? <div style={{color:"green"}}>{flash.success}</div>:
+       <div style={{color:"red"}}>{flash.error}</div>}
 
   <div className="AddStock">
   <h3 style={{textAlign:"centre",color:"blue"}}>Add a New Stock</h3>
