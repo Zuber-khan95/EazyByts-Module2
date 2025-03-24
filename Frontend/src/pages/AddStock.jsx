@@ -34,7 +34,7 @@ export default function AddStock()
           if(response.data.state==="success") {
       
           updateFlash({success:"Successfully Added the stock"});
-          setTimeout(()=>setFlash({success:""}),4000);
+          setTimeout(()=>updateFlash({success:""}),4000);
           setTimeout(()=>navigate('/'),4000);
     
     setFormData({
@@ -50,7 +50,7 @@ export default function AddStock()
       {
         console.error("Error:",err.response?err.response.data.message:"Server Error");
         updateFlash({error:"Unable to add the stock"});
-        setTimeout(()=>setFlash({error:""}),4000);
+        setTimeout(()=>updateFlash({error:""}),4000);
       }
     };
 

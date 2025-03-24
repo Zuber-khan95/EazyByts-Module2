@@ -5,10 +5,12 @@ import Card from '../components/Card.jsx'
 import Button from 'react-bootstrap/Button'
 import {  MdDelete } from 'react-icons/md'
 import './Portfolio.css'
+import { useFlash } from '../context/FlashContext.jsx';
 import axios from 'axios'
 export default function Portfolio(){
     const { user }=useAuth();
     const [data,setData]=useState([]);
+    const { flash, updateFlash }=useFlash();
     let getUserData=async()=>{  
         try{
           if (!user?.id) {
@@ -23,19 +25,26 @@ setData(response.data.user.Stocks);
         {
 console.error("Error:",err.response?err.response.data.message:"server error");
         }
-    }
+    };
 
     let handleDelete=async(itemId)=>{
 try{
-    console.log(itemId,user.id);
 let response=await axios.delete(`http://localhost:8080/portfolio/${itemId}/${user.id}`);
-console.log(response.data.state);
+if(response.data.state==="success")
+{
+    updateFlash({success:"Stock Deleted Successfully"});
+    setTimeout(()=>{
+    updateFlash({success:""});},4000); 
+}
 }
 catch(err)
 {
     console.error(err.response?err.response.data.message:"Server Error");
+    updateFlash({error:"Unable to delete stock."});
+    setTimeout(()=>{
+    updateFlash({error:""});},4000); 
 }
-    }
+    };
     
     useEffect(() => {
         if (user?.id) {
@@ -54,6 +63,7 @@ catch(err)
     return (
         <div>
             <div>
+            {flash? <div style={{color:"green"}}>{flash.success}</div>:<div style={{color:"red"}}>{flash.error}</div>}
             {user? <h3 style={{color:"lightBlue"}}>Welcome <u>{user.username}</u> On PortFolio Page...</h3>:
             <h3 style={{color:"blue"}}>Welcome Guest  On PortFolio Page...</h3>}
             </div>
